@@ -43,7 +43,9 @@ public class CarController : MonoBehaviour
         Vector3 moveDirection = transform.forward * (moveVertical * moveSpeed);
 
         // apply force to the car
-        rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Acceleration);
+        // rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Acceleration);
+        rb.AddForce(moveDirection * Time.deltaTime, ForceMode.VelocityChange);
+
 
         // if car speed is greater than 2
         if (rb.velocity.magnitude > 2)
@@ -75,7 +77,7 @@ public class CarController : MonoBehaviour
         {
             Debug.Log("DANGEEEERRRRR");
             rb.useGravity = true;
-            //rb.velocity=Vector3.down;
+            //rb.velocity=Vector3.down
         }
     }
 }
