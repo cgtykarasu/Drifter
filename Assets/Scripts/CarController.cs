@@ -30,12 +30,13 @@ public class CarController : MonoBehaviour
 
         // center of mass
         rb.centerOfMass = new Vector3(0, -0.5f, 0);
+        // rb.AddForce(transform.forward * moveSpeed, ForceMode.VelocityChange);
     }
 
     void FixedUpdate()
     {
         // get vertical input (A and D keys)
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveVertical = Mathf.Clamp(Input.GetAxis("Vertical"), 0.5f, 1);
         // get horizontal input (W and S keys)
         float moveHorizontal = Input.GetAxis("Horizontal");
 
@@ -44,7 +45,7 @@ public class CarController : MonoBehaviour
 
         // apply force to the car
         // rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Acceleration);
-        rb.AddForce(moveDirection * Time.deltaTime, ForceMode.VelocityChange);
+        rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Force);
 
 
         // if car speed is greater than 2
