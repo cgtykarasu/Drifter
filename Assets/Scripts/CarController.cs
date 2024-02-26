@@ -6,34 +6,37 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     // movement speed
-    public float moveSpeed = 40f;
+    const float MoveSpeed = 20f;
 
     // turn speed
-    public float turnSpeed = 90f;
+    // public float turnSpeed = 90f;
 
     // drift factor
-    public float driftFactor = .95f;
+    // public float driftFactor = .95f;
 
     //breaking status
-    public bool isBraking = false;
+    // public bool isBraking = false;
 
     //breakingforce
-    public float brakeForce = 0.985f;
+    // public float brakeForce = 0.985f;
 
-    private bool _allowTurning = true;
+    // private bool _allowTurning = true;
 
     private bool _isGrounded = true;
 
 
-    private Rigidbody rb;
+    private Rigidbody _rb;
 
-    void Start()
+    void Awake()
     {
         // rigidbody component
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
+        
+        float reduceCenterMassY = -0.5f;
+        _rb.centerOfMass = new Vector3(_rb.centerOfMass.x, reduceCenterMassY , _rb.centerOfMass.z);
 
         // center of mass
-        rb.centerOfMass = new Vector3(0, -0.5f, 0);
+        //rb.centerOfMass = new Vector3(0, -0.5f, 0);
         // rb.AddForce(transform.forward * moveSpeed, ForceMode.VelocityChange);
 
         // // Eğer araba başlangıçta sağa dönükse
@@ -67,13 +70,13 @@ public class CarController : MonoBehaviour
     IEnumerator Rotate(Vector3 axis, float angle, float duration = 0.7f)
     {
         Quaternion from = transform.rotation;
-        Quaternion to = transform.rotation;
-        to *= Quaternion.Euler(axis * angle);
+        Quaternion to = transform.rotation * Quaternion.Euler(axis * angle);
 
-        float elapsed = 0.1f;
+        float elapsed = 0.05f;
         while (elapsed < duration)
         {
-            transform.rotation = Quaternion.Slerp(from, to, elapsed / duration);
+            //transform.rotation = Quaternion.Slerp(from, to, elapsed / duration);
+            _rb.rotation = Quaternion.Slerp(from, to, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -125,7 +128,8 @@ public class CarController : MonoBehaviour
         //     isBraking = false;
         // }
 
-        transform.Translate(Vector3.forward * (moveSpeed * Time.deltaTime));
+        // transform.Translate(Vector3.forward * (moveSpeed * Time.deltaTime));
+        _rb.MovePosition(_rb.position + transform.forward * (MoveSpeed * Time.deltaTime));
         //
         // if( Input.GetKeyDown(KeyCode.Space) )
         // {
@@ -210,7 +214,7 @@ public class CarController : MonoBehaviour
         if (other.CompareTag("Platform"))
         {
             Debug.Log("Çıktı");
-            rb.useGravity = true;
+            _rb.useGravity = true;
             Invoke("AktifEt", 0.25f);
             //rb.velocity=Vector3.down
         }
