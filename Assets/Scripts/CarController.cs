@@ -70,7 +70,7 @@ public class CarController : MonoBehaviour
         Quaternion to = transform.rotation;
         to *= Quaternion.Euler(axis * angle);
 
-        float elapsed = 0.0f;
+        float elapsed = 0.1f;
         while (elapsed < duration)
         {
             transform.rotation = Quaternion.Slerp(from, to, elapsed / duration);
@@ -163,7 +163,7 @@ public class CarController : MonoBehaviour
         if (Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 350f ||
                                             transform.rotation.eulerAngles.y < 0.5f && transform.rotation.eulerAngles.y > -0.5f))
         {
-            StartCoroutine(Rotate(Vector3.up, 90, 0.12f));
+            StartCoroutine(Rotate(Vector3.up, 90, 0.2f));
 
             // if (!rotating)
             // {
@@ -195,7 +195,7 @@ public class CarController : MonoBehaviour
 
         else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f))
         {
-            StartCoroutine(Rotate(Vector3.up, -90, 0.12f));
+            StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
         }
         // {
         //     if (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f)
@@ -209,6 +209,7 @@ public class CarController : MonoBehaviour
     {
         if (other.CompareTag("Platform"))
         {
+            Debug.Log("Çıktı");
             rb.useGravity = true;
             Invoke("AktifEt", 0.25f);
             //rb.velocity=Vector3.down
