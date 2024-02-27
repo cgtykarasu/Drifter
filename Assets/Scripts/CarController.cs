@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Timeline.Actions;
@@ -6,207 +7,78 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     // movement speed
-    const float MoveSpeed = 20f;
+    [SerializeField] float MoveSpeed = 10f;
 
-    // turn speed
-    // public float turnSpeed = 90f;
-
-    // drift factor
-    // public float driftFactor = .95f;
-
-    //breaking status
-    // public bool isBraking = false;
-
-    //breakingforce
-    // public float brakeForce = 0.985f;
-
-    // private bool _allowTurning = true;
-
-    private bool _isGrounded = true;
-
+    // private bool _isGrounded = true;
+    public bool grounded = false;
+    public float groundedCheckDistance;
+    float _bufferCheckDistance = 0.05f;
 
     private Rigidbody _rb;
+    private BoxCollider _boxCollider;
+
+    private void Start()
+    {
+        _boxCollider = GetComponent<BoxCollider>();
+    }
 
     void Awake()
     {
         // rigidbody component
         _rb = GetComponent<Rigidbody>();
         
-        float reduceCenterMassY = -0.5f;
-        _rb.centerOfMass = new Vector3(_rb.centerOfMass.x, reduceCenterMassY , _rb.centerOfMass.z);
-
-        // center of mass
-        //rb.centerOfMass = new Vector3(0, -0.5f, 0);
-        // rb.AddForce(transform.forward * moveSpeed, ForceMode.VelocityChange);
-
-        // // Eğer araba başlangıçta sağa dönükse
-        // if (transform.rotation.eulerAngles.y == 0f && transform.rotation.eulerAngles.y != 90f)
-        // {
-        //     // Sadece ileri gitmesini sağla
-        //     _allowTurning = true;
-        // }
+        _rb.centerOfMass = new Vector3(_rb.centerOfMass.x, -.5f , _rb.centerOfMass.z);
     }
 
-    void Update()
+    private void Update()
     {
-    }
-
-    // bool rotating;
-    // IEnumerator RotateMe(Vector3 byAngles, float inTime)
-    // {
-    //     var fromAngle = transform.rotation;
-    //     var toAngle = Quaternion.Euler(transform.eulerAngles + byAngles);
-    //     for (var t = 0f; t <= 1; t += Time.deltaTime / inTime)
-    //     {
-    //         transform.rotation = Quaternion.Slerp(fromAngle, toAngle, t);
-    //       
-    //         yield return null;
-    //     }
-    //
-    //     transform.rotation = toAngle;
-    //     rotating = false;
-    // }
-
-    IEnumerator Rotate(Vector3 axis, float angle, float duration = 0.7f)
-    {
-        Quaternion from = transform.rotation;
-        Quaternion to = transform.rotation * Quaternion.Euler(axis * angle);
-
-        float elapsed = 0.05f;
-        while (elapsed < duration)
+        groundedCheckDistance = _boxCollider.bounds.extents.y + _bufferCheckDistance;
+        grounded = Physics.Raycast(transform.position, Vector3.down, groundedCheckDistance);
+        if (grounded)
         {
-            //transform.rotation = Quaternion.Slerp(from, to, elapsed / duration);
-            _rb.rotation = Quaternion.Slerp(from, to, elapsed / duration);
-            elapsed += Time.deltaTime;
+            Debug.DrawRay(transform.position, Vector3.up * 10, Color.blue);
+            Debug.Log("ZEMİNDE");
+        }
+    }
+
+    IEnumerator RotateMe(Vector3 byAngles, float inTime)
+    {
+        var fromAngle = transform.rotation;
+        var toAngle = Quaternion.Euler(transform.eulerAngles + byAngles);
+        for (var t = 0f; t <= 1; t += Time.deltaTime / inTime)
+        {
+            transform.rotation = Quaternion.Slerp(fromAngle, toAngle, t);
+            
+          
             yield return null;
         }
-
-        transform.rotation = to;
+    
+        transform.rotation = toAngle;
     }
-
-
+    
     void FixedUpdate()
     {
-        if (!_isGrounded)
-        {
-            transform.Translate(Vector3.forward * Time.deltaTime);
-            return;
-        }
-        // // get vertical input (A and D keys)
-        // float moveVertical = Mathf.Clamp(Input.GetAxis("Vertical"), 0.5f, 1);
-        // // get horizontal input (W and S keys)
-        // float moveHorizontal = Input.GetAxis("Horizontal");
-        //
-        // // create movement vector (forward direction)
-        // Vector3 moveDirection = transform.forward * (moveVertical * moveSpeed);
-        //
-        // // apply force to the car
-        // // rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Acceleration);
-        // rb.AddForce(moveDirection * Time.deltaTime, ForceMode.Force);
-        //
-        //
-        // // if car speed is greater than 2
-        // if (rb.velocity.magnitude > 2)
-        // {
-        //     // rotation amount
-        //     float turn = moveHorizontal * turnSpeed * driftFactor * Time.fixedDeltaTime;
-        //     // create rotation quaternion
-        //     Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
-        //     // update rotation
-        //     rb.MoveRotation(rb.rotation * turnRotation);
-        // }
-        //
-        // // Debug.Log(rb.velocity.magnitude);
-        //
-        // if (Input.GetKey(KeyCode.Space))
-        // {
-        //     isBraking = true;
-        //     rb.velocity *= brakeForce;
-        // }
-        // else
-        // {
-        //     isBraking = false;
-        // }
-
-        // transform.Translate(Vector3.forward * (moveSpeed * Time.deltaTime));
         _rb.MovePosition(_rb.position + transform.forward * (MoveSpeed * Time.deltaTime));
-        //
-        // if( Input.GetKeyDown(KeyCode.Space) )
-        // {
-        //     StartCoroutine(Rotate(Vector3.up, 90, 0.2f));
-        // }
-        // if( Input.GetKeyUp(KeyCode.Space) )
-        // {
-        //     StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
-        // }
-        // // if (_isTurningRight)
-        // // {
-        // //     StartCoroutine(Rotate(Vector3.up, 90, 0.5f));
-        // // }
-        // // else if (!_isTurningRight)
-        // // {
-        // //     StartCoroutine(Rotate(Vector3.up, -90, 0.5f));
-        // // }
+        
+        float driftRotationAmount = 90f;
 
-        // --------------------------------
+        Debug.Log(transform.rotation.eulerAngles.z);
 
-
-        // if (Input.GetKeyDown("e") && !rotating)
-        // {
-        //     rotating = true;
-        //     StartCoroutine(RotateMe(Vector3.up * 90, 0.2f));
-        // }
-        // if (Input.GetKeyDown("q") && !rotating)
-        // {
-        //     rotating = true;
-        //     StartCoroutine(RotateMe(Vector3.up * -90, 0.2f));
-        // }
-
-        // Debug.Log(transform.rotation.eulerAngles.y);
-
-        if (Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 350f ||
-                                            transform.rotation.eulerAngles.y < 0.5f && transform.rotation.eulerAngles.y > -0.5f))
+        if (Input.GetKey(KeyCode.Space) &&
+            (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 340f ||
+             transform.rotation.eulerAngles.y < 1.5f && transform.rotation.eulerAngles.y > -1.5f))
         {
-            StartCoroutine(Rotate(Vector3.up, 90, 0.2f));
+            StartCoroutine(RotateMe(Vector3.up * driftRotationAmount, .001f));
+             _rb.AddForce(transform.forward * MoveSpeed * 500);
+            // transform.rotation *= Quaternion.AngleAxis(90f, Vector3.up);
 
-            // if (!rotating)
-            // {
-            //     StartCoroutine(RotateMe(Vector3.up * 90, 0.2f));
-            //     rotating = true;
-            // }
-            // if (rotating)
-            // {
-            //     StartCoroutine(RotateMe(Vector3.up * -90, 0.2f));
-            //     rotating = false;
-            // }
-            //
-            // _allowTurning = false;
-
-            // StartCoroutine(RotateMe(Vector3.up * 90, 0.1f));
-
-            // Debug.Log(transform.rotation.eulerAngles.y);
-            //
-            // if (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 350f || transform.rotation.eulerAngles.y < 0.5f && transform.rotation.eulerAngles.y > -0.5f)
-            // {
-            //     StartCoroutine(Rotate(Vector3.up, 90, 0.2f));
-            // }
-
-            // else if (transform.rotation.eulerAngles.y == 90f && transform.rotation.eulerAngles.y != 0f)
-            // {
-            //     StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
-            // }
         }
-
-        else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f))
+        else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 100f && transform.rotation.eulerAngles.y > 80f))
         {
-            StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
+            StartCoroutine(RotateMe(Vector3.up * -90f, .001f));
+            _rb.AddForce(transform.forward * MoveSpeed * 500);
+            // transform.rotation *= Quaternion.AngleAxis(-90f, Vector3.up);
         }
-        // {
-        //     if (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f)
-        //     {
-        //         StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
-        //     }
-        // }
     }
 
     void OnTriggerExit(Collider other)
@@ -220,8 +92,8 @@ public class CarController : MonoBehaviour
         }
     }
 
-    void AktifEt()
-    {
-        _isGrounded = false;
-    }
+    // void AktifEt()
+    // {
+    //     _isGrounded = false;
+    // }
 }
