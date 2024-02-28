@@ -7,7 +7,7 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     // movement speed
-    [SerializeField] float MoveSpeed = 10f;
+    [SerializeField] float MoveSpeed = 2f;
 
     // private bool _isGrounded = true;
     public bool grounded = false;
@@ -17,15 +17,11 @@ public class CarController : MonoBehaviour
     private Rigidbody _rb;
     private BoxCollider _boxCollider;
 
-    private void Start()
-    {
-        _boxCollider = GetComponent<BoxCollider>();
-    }
-
     void Awake()
     {
         // rigidbody component
         _rb = GetComponent<Rigidbody>();
+        _boxCollider = GetComponent<BoxCollider>();
         
         _rb.centerOfMass = new Vector3(_rb.centerOfMass.x, -.5f , _rb.centerOfMass.z);
     }
@@ -69,14 +65,14 @@ public class CarController : MonoBehaviour
              transform.rotation.eulerAngles.y < 1.5f && transform.rotation.eulerAngles.y > -1.5f))
         {
             StartCoroutine(RotateMe(Vector3.up * driftRotationAmount, .001f));
-             _rb.AddForce(transform.forward * MoveSpeed * 500);
+             _rb.AddForce(transform.forward * MoveSpeed * 175);
             // transform.rotation *= Quaternion.AngleAxis(90f, Vector3.up);
 
         }
         else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 100f && transform.rotation.eulerAngles.y > 80f))
         {
             StartCoroutine(RotateMe(Vector3.up * -90f, .001f));
-            _rb.AddForce(transform.forward * MoveSpeed * 500);
+            _rb.AddForce(transform.forward * MoveSpeed * 175);
             // transform.rotation *= Quaternion.AngleAxis(-90f, Vector3.up);
         }
     }
