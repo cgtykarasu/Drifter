@@ -6,7 +6,7 @@ using UnityEngine;
 public class CarController : MonoBehaviour
 {
     // movement speed
-    const float MoveSpeed = 20f;
+    public float MoveSpeed = 20f;
 
     // turn speed
     // public float turnSpeed = 90f;
@@ -67,17 +67,18 @@ public class CarController : MonoBehaviour
     //     rotating = false;
     // }
 
-    IEnumerator Rotate(Vector3 axis, float angle, float duration = 0.7f)
+    IEnumerator Rotate(Vector3 axis, float angle, float duration = 0.4f)
     {
         Quaternion from = transform.rotation;
         Quaternion to = transform.rotation * Quaternion.Euler(axis * angle);
 
-        float elapsed = 0.05f;
+        float elapsed = 0.2f;
         while (elapsed < duration)
         {
             //transform.rotation = Quaternion.Slerp(from, to, elapsed / duration);
             _rb.rotation = Quaternion.Slerp(from, to, elapsed / duration);
             elapsed += Time.deltaTime;
+            
             yield return null;
         }
 
@@ -128,8 +129,14 @@ public class CarController : MonoBehaviour
         //     isBraking = false;
         // }
 
-        // transform.Translate(Vector3.forward * (moveSpeed * Time.deltaTime));
+        transform.Translate(Vector3.forward * (MoveSpeed * Time.deltaTime));
         _rb.MovePosition(_rb.position + transform.forward * (MoveSpeed * Time.deltaTime));
+        // Vector3 moveDirection = transform.forward * MoveSpeed;
+        // if (_rb.velocity.magnitude < MoveSpeed)
+        // {
+        //     _rb.AddForce(moveDirection * Time.deltaTime, ForceMode.VelocityChange);
+        // }
+        
         //
         // if( Input.GetKeyDown(KeyCode.Space) )
         // {
@@ -164,10 +171,23 @@ public class CarController : MonoBehaviour
 
         // Debug.Log(transform.rotation.eulerAngles.y);
 
-        if (Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 350f ||
-                                            transform.rotation.eulerAngles.y < 0.5f && transform.rotation.eulerAngles.y > -0.5f))
+        if (Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 360f && transform.rotation.eulerAngles.y > 300f ||
+                                            transform.rotation.eulerAngles.y < 5f && transform.rotation.eulerAngles.y > -5f))
         {
-            StartCoroutine(Rotate(Vector3.up, 90, 0.2f));
+            StartCoroutine(Rotate(Vector3.up, 90));
+            _rb.rotation = Quaternion.Euler(0, -180, 0);
+
+
+                // // rotation amount
+                // float turn = MoveSpeed * Time.fixedDeltaTime;
+                // // create rotation quaternion
+                // Quaternion turnRotation = Quaternion.Euler(0f, 90, 0f);
+                // // update rotation
+                // _rb.MoveRotation(_rb.rotation * turnRotation);
+
+
+                // _rb.AddForce(new Vector3(200,0,0), ForceMode.Force);
+
 
             // if (!rotating)
             // {
@@ -197,9 +217,24 @@ public class CarController : MonoBehaviour
             // }
         }
 
-        else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f))
+        else if (!Input.GetKey(KeyCode.Space) && (transform.rotation.eulerAngles.y < 100f && transform.rotation.eulerAngles.y > 80f))
         {
-            StartCoroutine(Rotate(Vector3.up, -90, 0.2f));
+            StartCoroutine(Rotate(Vector3.up, -90));
+            _rb.rotation = Quaternion.Euler(0, -180, 0);
+
+            // if (_rb.velocity.magnitude > 2)
+            // {
+            //     // rotation amount
+            //     float turn = MoveSpeed * 100f * .95f * Time.fixedDeltaTime;
+            //     // create rotation quaternion
+            //     Quaternion turnRotation = Quaternion.Euler(0f, -90, 0f);
+            //     // update rotation
+            //     _rb.MoveRotation(_rb.rotation * turnRotation);
+            // }
+
+
+            // _rb.AddForce(new Vector3(200,0,0), ForceMode.Force);
+
         }
         // {
         //     if (transform.rotation.eulerAngles.y < 91f && transform.rotation.eulerAngles.y > 89f)
