@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         // Kameranın konumunu ana karakterin konumuna ayarla
-        transform.position = target.position + offset;
+        transform.position = target.position;
 
         // Kameranın rotasyonunu sabit tut
         // transform.rotation = Quaternion.Euler(45f, 0f, 0f); // Örneğin kamera 45 derece eğik olacak şekilde ayarlandı
