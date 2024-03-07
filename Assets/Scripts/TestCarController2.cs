@@ -19,8 +19,8 @@ public class TestCarController2 : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
 
-        Vector3 movement = transform.forward * moveVertical * speed * Time.deltaTime;
-        rb.AddForce(movement);
+        Vector3 movement = transform.forward * moveVertical * 100 * speed * Time.fixedDeltaTime;
+        rb.AddForce(movement, ForceMode.Acceleration);
 
         // float turn = moveHorizontal * turnSpeed * Time.deltaTime;
         // Quaternion turnRotation = Quaternion.Euler(0f, turn, 0f);
