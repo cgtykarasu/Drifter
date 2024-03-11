@@ -7,11 +7,14 @@ public class GameController : MonoBehaviour
 {
     
     public GameOverScreen gameOverScreen;
+    
+    ScoreManager _scoreManager;
 
     void Start()
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        _scoreManager = FindObjectOfType<ScoreManager>();
     }
 
     void Update()
@@ -30,7 +33,7 @@ public class GameController : MonoBehaviour
 
     public void GameOver()
     {
-        gameOverScreen.Setup(0);
+        gameOverScreen.Setup(_scoreManager.GetScore);
     }
     
     

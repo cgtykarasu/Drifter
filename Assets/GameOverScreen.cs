@@ -21,7 +21,6 @@ public class GameOverScreen : MonoBehaviour
         // UnityEngine.SceneManagement.SceneManager.LoadScene("Level1");
         // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
     }
 
     public void MainMenuButton()
