@@ -1,51 +1,40 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RoadAddController : MonoBehaviour
 {
     public int roadCount = 3;
-    
     public GameObject[] roadPrefabs;
-    List<GameObject> roads = new List<GameObject>();
+    private List<GameObject> roads = new List<GameObject>();
 
     void Awake()
     {
-        ConnectRoad();
+        ConnectRoads();
     }
 
-
-    void ConnectRoad()
+    void ConnectRoads()
     {
-        // Instantiate(roadPrefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
-            
         for (int i = 0; i < roadCount; i++)
         {
-            var road = Instantiate(roadPrefabs[Random.Range(0, roadPrefabs.Length)], new Vector3(0, 0, 0), Quaternion.identity);
+            GameObject road = InstantiateRandomRoad();
             roads.Add(road);
-            if (roads.Count > 1)
+            if (i > 0)
             {
-                TwoRoadCombine(roads[i - 1], roads[i]);
+                CombineRoads(roads[i - 1], road);
             }
         }
     }
 
-    void TwoRoadCombine(GameObject r0, GameObject r1)
+    GameObject InstantiateRandomRoad()
     {
-        //var second = Instantiate(r1, new Vector3(0, 0, 0), Quaternion.identity);
-        var second = r1;
-        var firstRoadExitPoint = r0.transform.Find("Exit");
-        // Debug.Log("R0 Exit Point ::: " + firstRoadExitPoint.transform.position);
-        var secondRoadEntryPoint = r1.transform.Find("Entry");
-        // Debug.Log("R1 Entry Point ::: " + secondRoadEntryPoint.transform.position);
+        int randomIndex = Random.Range(0, roadPrefabs.Length);
+        return Instantiate(roadPrefabs[randomIndex], Vector3.zero, Quaternion.identity);
+    }
 
-        // secondRoadExitPoint = secondRoad.transform.Find("Exit"); 
-        // Debug.Log("R0 ÖNCESİ ::: " + r0.transform.position);
-        // Debug.Log("R1 ÖNCESİ ::: " + r1.transform.position);
-        
-        second.transform.position = firstRoadExitPoint.position - secondRoadEntryPoint.position;
-        
-        // Debug.Log("R0 SONRASI ::: " + r0.transform.position);
-        // Debug.Log("R1 SONRASI ::: " + r1.transform.position);
+    private void CombineRoads(GameObject firstRoad, GameObject secondRoad)
+    {
+        Vector3 exitPoint = firstRoad.transform.Find("Exit").position;
+        Vector3 entryPoint = secondRoad.transform.Find("Entry").position;
+        secondRoad.transform.position = exitPoint - entryPoint;
     }
 }
